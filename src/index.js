@@ -39,7 +39,7 @@ function onFetchSuccess(data) {
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
-  if (data.hits.length === 5) {
+  if (data.hits.length === 40) {
     refs.loadMoreBtn.classList.remove('is-hidden');
   }
 
@@ -61,7 +61,7 @@ function onLoadMoreBtnClick() {
 }
 
 function onFetchSuccessLoadMore(data) {
-  if (data.hits.length < 5) {
+  if (data.hits.length < 40) {
     renderGallery(data.hits);
 
     refs.loadMoreBtn.classList.add('is-hidden');
