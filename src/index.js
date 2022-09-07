@@ -33,13 +33,21 @@ function onFormSubmit(evt) {
 
 function onFetchSuccess(data) {
   if (data.hits.length === 0) {
-    Notify.failure(
+    return Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
+  renderGallery(data.hits);
+
   Notify.success(`Hooray! We found ${data.totalHits} images.`);
 
-  renderGallery(data.hits);
   lightbox.refresh();
+
   refs.loadMoreBtn.classList.remove('is-hidden');
+}
+
+refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
+
+function onLoadMoreBtnClick(evt) {
+  pageNumber += 1;
 }
