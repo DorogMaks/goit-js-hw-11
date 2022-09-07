@@ -44,10 +44,9 @@ function onFetchSuccess(data) {
   }
 
   renderGallery(data.hits);
+  lightbox.refresh();
 
   Notify.success(`Hooray! We found ${data.totalHits} images.`);
-
-  lightbox.refresh();
 }
 
 refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
@@ -61,14 +60,15 @@ function onLoadMoreBtnClick() {
 }
 
 function onFetchSuccessLoadMore(data) {
-  if (data.hits.length < 40) {
+  if (data.hits.length < 40 || refs.gallery.children.length >= 480) {
     renderGallery(data.hits);
-
     refs.loadMoreBtn.classList.add('is-hidden');
 
     return Notify.info(
       "We're sorry, but you've reached the end of search results."
     );
   }
+
   renderGallery(data.hits);
+  lightbox.refresh();
 }
