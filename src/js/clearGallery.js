@@ -3,6 +3,5 @@ const refs = getRefs();
 
 export function clearGallery() {
   refs.gallery.innerHTML = '';
-  pageNumber = 1;
-  console.log('clear');
+  refs.loadMoreBtn.classList.add('is-hidden');
 }

@@ -21,8 +21,10 @@ function onFormSubmit(evt) {
   clearGallery();
 
   const searchValue = evt.currentTarget.elements.searchQuery.value.trim();
+
   if (!searchValue) {
     clearGallery();
+    Notify.info('Please, enter a value for the search query.');
     return;
   }
 
@@ -35,6 +37,9 @@ function onFetchSuccess(data) {
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
+  Notify.success(`Hooray! We found ${data.totalHits} images.`);
 
   renderGallery(data.hits);
+  lightbox.refresh();
+  refs.loadMoreBtn.classList.remove('is-hidden');
 }

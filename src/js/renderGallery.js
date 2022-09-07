@@ -15,9 +15,9 @@ export function renderGallery(array) {
       }) => {
         return `
     <div class="photo-card">
-        <a href="${largeImageURL}">
+        <a href="${largeImageURL}" class="photo-link">
             <img
-                class="gallery-image"
+                class="photo-image"
                 src="${webformatURL}"
                 alt="${tags}"
                 title="${tags}"
