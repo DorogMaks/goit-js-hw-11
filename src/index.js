@@ -12,9 +12,10 @@ let lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
   scrollZoom: false,
 });
-let pageNumber;
+let pageNumber = '';
 
 refs.searchForm.addEventListener('submit', onFormSubmit);
+refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
 
 function onFormSubmit(evt) {
   evt.preventDefault();
@@ -48,8 +49,6 @@ function onFetchSuccess(data) {
 
   Notify.success(`Hooray! We found ${data.totalHits} images.`);
 }
-
-refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
 
 function onLoadMoreBtnClick() {
   pageNumber += 1;
