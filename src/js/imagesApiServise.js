@@ -21,6 +21,8 @@ export default class ImagesApiServise {
           page: this.page,
         },
       });
+      this.incrementPage();
+
       return response.data;
     } catch (error) {
       console.error(error);
