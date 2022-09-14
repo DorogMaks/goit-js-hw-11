@@ -60,6 +60,7 @@ function onLoadMore() {
       refs.gallery.children.length >= 480
     ) {
       addImagesMarkup(hits);
+      lightbox.refresh();
       loadMoreBtn.hide();
 
       return Notify.info(

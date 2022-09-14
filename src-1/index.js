@@ -12,6 +12,7 @@ let lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
   scrollZoom: false,
 });
+let searchValue = '';
 let pageNumber = '';
 
 refs.searchForm.addEventListener('submit', onFormSubmit);
@@ -21,7 +22,7 @@ function onFormSubmit(evt) {
   evt.preventDefault();
   clearGallery();
 
-  const searchValue = evt.currentTarget.elements.searchQuery.value.trim();
+  searchValue = evt.currentTarget.elements.searchQuery.value.trim();
 
   if (!searchValue) {
     clearGallery();
@@ -53,14 +54,13 @@ function onFetchSuccess(data) {
 function onLoadMoreBtnClick() {
   pageNumber += 1;
 
-  const searchValue = refs.searchForm.elements.searchQuery.value.trim();
-
   fetchImages(searchValue, pageNumber).then(onFetchSuccessLoadMore);
 }
 
 function onFetchSuccessLoadMore(data) {
   if (data.hits.length < 40 || refs.gallery.children.length >= 480) {
     renderGallery(data.hits);
+    lightbox.refresh();
     refs.loadMoreBtn.classList.add('is-hidden');
 
     return Notify.info(
