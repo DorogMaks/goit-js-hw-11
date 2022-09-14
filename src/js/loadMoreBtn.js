@@ -18,13 +18,14 @@ export default class LoadMoreBtn {
 
   enable() {
     this.refs.button.disabled = false;
+    this.refs.button.classList.remove('is-disabled');
     this.refs.label.textContent = 'Load more';
     this.refs.spinner.style.display = 'none';
   }
 
   disable() {
     this.refs.button.disabled = true;
-    this.refs.button.style.backgroundColor = 'rgba(64, 85, 180, 0.8)';
+    this.refs.button.classList.add('is-disabled');
     this.refs.label.textContent = 'Loading...';
     this.refs.spinner.style.display = 'block';
   }

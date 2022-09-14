@@ -1,6 +1,9 @@
+import axios from 'axios';
+
 export default class ImagesApiServise {
   constructor() {
     this.searchValue = '';
+    this.perPage = 40;
     this.page = 1;
   }
 
@@ -12,7 +15,7 @@ export default class ImagesApiServise {
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: true,
-      per_page: 5,
+      per_page: this.perPage,
       page: this.page,
     });
 
@@ -22,7 +25,7 @@ export default class ImagesApiServise {
       })
       .then(data => {
         this.incrementPage();
-        return data.hits;
+        return data;
       });
   }
 

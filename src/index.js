@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -6,12 +5,12 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import getRefs from './js/getRefs.js';
 import { addImagesMarkup, clearImagesMarkup } from './js/markupImages.js';
 
-import ImagesApiServise from './js/fetchImages.js';
+import ImagesApiServise from './js/imagesApiServise.js';
 import LoadMoreBtn from './js/loadMoreBtn.js';
 
 const refs = getRefs();
 const imgApiService = new ImagesApiServise();
-const loadMoreBtn = new LoadMoreBtn({ hidden: true }); // { hidden: true }
+const loadMoreBtn = new LoadMoreBtn({ hidden: true });
 
 let lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
@@ -27,18 +26,49 @@ function onSearch(evt) {
   imgApiService.searchValue =
     evt.currentTarget.elements.searchQuery.value.trim();
 
-  imgApiService.fetchImages().then(images => {
-    clearImagesMarkup();
-    addImagesMarkup(images);
+  if (!imgApiService.searchValue) {
+    return Notify.info('Please, enter a value for the search query.');
+  }
+
+  imgApiService.resetPage();
+  loadMoreBtn.hide();
+  clearImagesMarkup();
+
+  imgApiService.fetchImages().then(({ hits, totalHits }) => {
+    if (hits.length === 0) {
+      return Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    }
+    if (totalHits > imgApiService.perPage) {
+      loadMoreBtn.show();
+    }
+
+    addImagesMarkup(hits);
     lightbox.refresh();
+    loadMoreBtn.enable();
+    Notify.success(`Hooray! We found ${totalHits} images.`);
   });
 }
 
 function onLoadMore() {
-  console.log('click');
-}
+  loadMoreBtn.disable();
 
-loadMoreBtn.enable();
-// loadMoreBtn.disable();
-loadMoreBtn.show();
-// loadMoreBtn.hide();
+  imgApiService.fetchImages().then(({ hits }) => {
+    if (
+      hits.length < imgApiService.perPage ||
+      refs.gallery.children.length >= 480
+    ) {
+      addImagesMarkup(hits);
+      loadMoreBtn.hide();
+
+      return Notify.info(
+        "We're sorry, but you've reached the end of search results."
+      );
+    }
+
+    addImagesMarkup(hits);
+    lightbox.refresh();
+    loadMoreBtn.enable();
+  });
+}
