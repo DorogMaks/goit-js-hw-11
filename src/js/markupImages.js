@@ -1,3 +1,4 @@
+import { lightbox } from './sliderLightbox.js';
 import getRefs from './getRefs.js';
 const refs = getRefs();
 
@@ -20,7 +21,6 @@ function createImagesMarkup(array) {
                 class="photo-image"
                 src="${webformatURL}"
                 alt="${tags}"
-                title="${tags}"
                 loading="lazy"
             />
         </a>
@@ -50,6 +50,7 @@ function createImagesMarkup(array) {
 
 export function addImagesMarkup(array) {
   refs.gallery.insertAdjacentHTML('beforeend', createImagesMarkup(array));
+  lightbox.refresh();
 }
 
 export function clearImagesMarkup() {

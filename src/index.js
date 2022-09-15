@@ -1,7 +1,5 @@
 import { Notify } from 'notiflix';
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-
+import smoothScroll from './js/smoothScroll.js';
 import getRefs from './js/getRefs.js';
 import { addImagesMarkup, clearImagesMarkup } from './js/markupImages.js';
 
@@ -11,11 +9,6 @@ import LoadMoreBtn from './js/loadMoreBtn.js';
 const refs = getRefs();
 const imgApiService = new ImagesApiServise();
 const loadMoreBtn = new LoadMoreBtn({ hidden: true });
-
-let lightbox = new SimpleLightbox('.gallery a', {
-  captionDelay: 250,
-  scrollZoom: false,
-});
 
 refs.searchForm.addEventListener('submit', onSearch);
 loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
@@ -30,9 +23,9 @@ function onSearch(evt) {
     return Notify.info('Please, enter a value for the search query.');
   }
 
-  imgApiService.resetPage();
-  loadMoreBtn.hide();
   clearImagesMarkup();
+  loadMoreBtn.hide();
+  imgApiService.resetPage();
 
   imgApiService.fetchImages().then(({ hits, totalHits }) => {
     if (hits.length === 0) {
@@ -45,9 +38,9 @@ function onSearch(evt) {
     }
 
     addImagesMarkup(hits);
-    lightbox.refresh();
     loadMoreBtn.enable();
-    Notify.success(`Hooray! We found ${totalHits} images.`);
+
+    return Notify.success(`Hooray! We found ${totalHits} images.`);
   });
 }
 
@@ -60,7 +53,7 @@ function onLoadMore() {
       refs.gallery.children.length >= 480
     ) {
       addImagesMarkup(hits);
-      lightbox.refresh();
+      smoothScroll(2);
       loadMoreBtn.hide();
 
       return Notify.info(
@@ -69,7 +62,7 @@ function onLoadMore() {
     }
 
     addImagesMarkup(hits);
-    lightbox.refresh();
+    smoothScroll(2);
     loadMoreBtn.enable();
   });
 }
