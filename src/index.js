@@ -7,7 +7,7 @@ import ImagesApiServise from './js/imagesApiServise.js';
 import LoadMoreBtn from './js/loadMoreBtn.js';
 
 const refs = getRefs();
-const imgApiService = new ImagesApiServise();
+const imagesApiService = new ImagesApiServise();
 const loadMoreBtn = new LoadMoreBtn({ hidden: true });
 
 refs.searchForm.addEventListener('submit', onSearch);
@@ -16,24 +16,24 @@ loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
 function onSearch(evt) {
   evt.preventDefault();
 
-  imgApiService.searchValue =
+  imagesApiService.searchValue =
     evt.currentTarget.elements.searchQuery.value.trim();
 
-  if (!imgApiService.searchValue) {
+  if (!imagesApiService.searchValue) {
     return Notify.info('Please, enter a value for the search query.');
   }
 
   clearImagesMarkup();
   loadMoreBtn.hide();
-  imgApiService.resetPage();
+  imagesApiService.resetPage();
 
-  imgApiService.fetchImages().then(({ hits, totalHits }) => {
+  imagesApiService.fetchImages().then(({ hits, totalHits }) => {
     if (hits.length === 0) {
       return Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
     }
-    if (totalHits > imgApiService.perPage) {
+    if (totalHits > imagesApiService.perPage) {
       loadMoreBtn.show();
     }
 
@@ -47,10 +47,9 @@ function onSearch(evt) {
 function onLoadMore() {
   loadMoreBtn.disable();
 
-  imgApiService.fetchImages().then(({ hits }) => {
+  imagesApiService.fetchImages().then(({ hits, totalHits }) => {
     if (
-      hits.length < imgApiService.perPage ||
-      refs.gallery.children.length >= 480
+      imagesApiService.page > Math.ceil(totalHits / imagesApiService.perPage)
     ) {
       addImagesMarkup(hits);
       smoothScroll(2);
