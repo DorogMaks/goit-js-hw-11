@@ -10,14 +10,11 @@ export async function fetchImages(searchValue, pageNumber) {
     per_page: 40,
     page: pageNumber,
   });
-  return await fetch(`${URL}?${SEARCH_PARAMS}`)
-    .then(response => {
-      if (!response.ok || response.status === 404) {
-        throw new Error(response.status);
-      }
-      return response.json();
-    })
-    .catch(error => {
-      console.error(error);
-    });
+  try {
+    const response = await fetch(`${URL}?${SEARCH_PARAMS}`);
+    const data = response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
 }
