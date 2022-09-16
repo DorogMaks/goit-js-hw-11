@@ -13,7 +13,7 @@ const loadMoreBtn = new LoadMoreBtn({ hidden: true });
 refs.searchForm.addEventListener('submit', onSearch);
 loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
 
-function onSearch(evt) {
+async function onSearch(evt) {
   evt.preventDefault();
 
   imagesApiService.searchValue =
@@ -27,41 +27,39 @@ function onSearch(evt) {
   loadMoreBtn.hide();
   imagesApiService.resetPage();
 
-  imagesApiService.fetchImages().then(({ hits, totalHits }) => {
-    if (hits.length === 0) {
-      return Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
-    if (totalHits > imagesApiService.perPage) {
-      loadMoreBtn.show();
-    }
+  const { hits, totalHits } = await imagesApiService.fetchImages();
 
-    addImagesMarkup(hits);
-    loadMoreBtn.enable();
+  if (hits.length === 0) {
+    return Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+  if (totalHits > imagesApiService.perPage) {
+    loadMoreBtn.show();
+  }
 
-    return Notify.success(`Hooray! We found ${totalHits} images.`);
-  });
+  addImagesMarkup(hits);
+  loadMoreBtn.enable();
+
+  return Notify.success(`Hooray! We found ${totalHits} images.`);
 }
 
-function onLoadMore() {
+async function onLoadMore() {
   loadMoreBtn.disable();
 
-  imagesApiService.fetchImages().then(({ hits, totalHits }) => {
-    if (
-      imagesApiService.page > Math.ceil(totalHits / imagesApiService.perPage)
-    ) {
-      addImagesMarkup(hits);
-      smoothScroll(2);
-      loadMoreBtn.hide();
+  const { hits, totalHits } = await imagesApiService.fetchImages();
 
-      return Notify.info(
-        "We're sorry, but you've reached the end of search results."
-      );
-    }
-
+  if (imagesApiService.page > Math.ceil(totalHits / imagesApiService.perPage)) {
     addImagesMarkup(hits);
     smoothScroll(2);
-    loadMoreBtn.enable();
-  });
+    loadMoreBtn.hide();
+
+    return Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
+
+  addImagesMarkup(hits);
+  smoothScroll(2);
+  loadMoreBtn.enable();
 }
