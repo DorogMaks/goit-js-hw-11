@@ -26,17 +26,21 @@ function onFormSubmit(evt) {
 
   if (!searchValue) {
     clearGallery();
-    Notify.info('Please, enter a value for the search query.');
-    return;
+
+    return Notify.info('Please, enter a value for the search query.');
   }
 
   pageNumber = 1;
 
-  fetchImages(searchValue, pageNumber).then(onFetchSuccess);
+  fetchImages(searchValue, pageNumber)
+    .then(onFetchSuccess)
+    .catch(error => console.error(error));
 }
 
 function onFetchSuccess(data) {
   if (data.hits.length === 0) {
+    refs.searchForm.reset();
+
     return Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
@@ -48,13 +52,15 @@ function onFetchSuccess(data) {
   renderGallery(data.hits);
   lightbox.refresh();
 
-  Notify.success(`Hooray! We found ${data.totalHits} images.`);
+  return Notify.success(`Hooray! We found ${data.totalHits} images.`);
 }
 
 function onLoadMoreBtnClick() {
   pageNumber += 1;
 
-  fetchImages(searchValue, pageNumber).then(onFetchSuccessLoadMore);
+  fetchImages(searchValue, pageNumber)
+    .then(onFetchSuccessLoadMore)
+    .catch(error => console.error(error));
 }
 
 function onFetchSuccessLoadMore(data) {
